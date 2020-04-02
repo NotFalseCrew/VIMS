@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os  # core Python module
@@ -12,17 +13,31 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
     os.path.join(basedir, 'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Init DB
+# Initialize API
+api = Api(app)
+
+# Initialize database ORM
 db = SQLAlchemy(app)
 
-# Init marshmellow
+# Initialize marshmallow
 ma = Marshmallow(app)
 
+# Route classes
 
-@app.route('/', methods=['GET'])
-def all():
-    return jsonify({'status': 'OK'})
 
+class testRoute(Resource):
+    def get(self):
+        return jsonify({'status': 'test route'})
+
+
+class defaultRoute(Resource):
+    def get(self):
+        return jsonify({'status': 'default route'})
+
+
+# Adding route paths
+api.add_resource(testRoute, '/testRoute')
+api.add_resource(defaultRoute, '/')
 
 # Run server
 if __name__ == '__main__':
